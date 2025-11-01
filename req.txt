@@ -1,0 +1,18 @@
+# Core utilities
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Deep learning frameworks
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Face detection models
+facenet-pytorch>=2.5.3      # For MTCNN
+insightface>=0.7.3          # For RetinaFace
+onnxruntime>=1.15.0         # Required by insightface
+
+# Computer vision
+opencv-python>=4.10.0
+
+# Optional for config handling if needed later
+PyYAML>=6.0.1
