@@ -12,7 +12,7 @@ insightface>=0.7.3          # For RetinaFace
 onnxruntime>=1.15.0         # Required by insightface
 
 # Computer vision
-opencv-python>=4.10.0
+opencv-contrib-python>=4.10.0  # Includes tracking algorithms (TrackerKCF, TrackerCSRT)
 
 # Optional for config handling if needed later
 PyYAML>=6.0.1
