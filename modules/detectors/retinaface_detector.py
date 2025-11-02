@@ -1,6 +1,7 @@
  # modules/detection/detectors/retinaface_detector.py
 from insightface.app import FaceAnalysis
 import cv2
+import numpy as np
 from PIL import Image
 from modules.detection.face_detection_base import FaceDetectorBase
 
@@ -14,6 +15,9 @@ class RetinaFaceDetector(FaceDetectorBase):
         if isinstance(image, str):
             image = cv2.imread(image)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        elif isinstance(image, Image.Image):
+            image = np.array(image)
+            
         faces = self.app.get(image)
         cropped_faces = []
         for face in faces:
@@ -21,3 +25,25 @@ class RetinaFaceDetector(FaceDetectorBase):
             cropped = image[y1:y2, x1:x2]
             cropped_faces.append(Image.fromarray(cropped))
         return cropped_faces
+    
+    def detect_faces_with_boxes(self, image):
+        """Detect faces and return bounding boxes for visualization."""
+        if isinstance(image, str):
+            image = cv2.imread(image)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        elif isinstance(image, Image.Image):
+            image = np.array(image)
+        
+        faces = self.app.get(image)
+        
+        if not faces:
+            return []
+        
+        # Return list of (bbox, score) tuples
+        detections = []
+        for face in faces:
+            bbox = face.bbox  # [x1, y1, x2, y2]
+            score = face.det_score  # Detection confidence
+            detections.append((bbox, score))
+        
+        return detections

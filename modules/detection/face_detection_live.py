@@ -4,6 +4,7 @@ import os
 from PIL import Image
 from datetime import datetime
 from modules.detectors.mtcnn_detector import MTCNNDetector
+from modules.detectors.retinaface_detector import RetinaFaceDetector
 
 class FaceTracker:
     """Represents a tracked face with unique ID."""
@@ -38,15 +39,19 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     - New detection when tracking is lost
     
     Args:
-        method: Detection method (only 'mtcnn' supported)
+        method: Detection method ('mtcnn' or 'retinaface')
         detection_interval: Run face detection every N frames (default: 60, ~2 seconds)
         iou_threshold: Minimum overlap to consider same face (default: 0.5, range: 0.3-0.7)
     """
-    if method.lower() != "mtcnn":
-        raise ValueError(f"Unsupported method for now: {method}")
-
-    print("[INFO] Initializing face detector...")
-    detector = MTCNNDetector()
+    # Initialize the appropriate detector
+    print(f"[INFO] Initializing {method.upper()} face detector...")
+    
+    if method.lower() == "mtcnn":
+        detector = MTCNNDetector()
+    elif method.lower() == "retinaface":
+        detector = RetinaFaceDetector()
+    else:
+        raise ValueError(f"Unsupported method: {method}. Use 'mtcnn' or 'retinaface'")
     
     # Create output directory if it doesn't exist
     output_dir = "data/cropped_faces"
@@ -67,6 +72,7 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     print("   ✅ Continues tracking until face leaves frame")
     print("   ✅ New faces get new IDs and are saved")
     print(f"\n⚙️  Settings:")
+    print(f"   - Detection method: {method.upper()}")
     print(f"   - Detection interval: {detection_interval} frames (~{detection_interval/30:.1f}s)")
     print(f"   - IoU threshold: {iou_threshold} (overlap matching)")
     print(f"   - Tracker: KCF (Fast & Reliable)")
@@ -186,7 +192,7 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
             cv2.putText(display_frame, "DETECTING...", (10, 70),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
 
-        cv2.imshow("Face Tracking & Auto-Save", display_frame)
+        cv2.imshow(f"Face Tracking & Auto-Save ({method.upper()})", display_frame)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
