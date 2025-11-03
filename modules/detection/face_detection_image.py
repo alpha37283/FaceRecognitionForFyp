@@ -23,6 +23,12 @@ def detect_faces_from_image(image_path, method="mtcnn"):
         print("[-] No faces detected.")
         return []
 
-    saved_paths = detector.save_faces(faces)
+    # Pass source image name for unique filenames
+    saved_paths = detector.save_faces(faces, source_name=image_path)
     print(f"[+] Saved {len(saved_paths)} face(s) to data/cropped_faces/")
+    
+    # Show saved filenames
+    for path in saved_paths:
+        print(f"    - {os.path.basename(path)}")
+    
     return saved_paths
