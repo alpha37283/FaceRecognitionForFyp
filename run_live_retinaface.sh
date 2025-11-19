@@ -20,3 +20,5 @@ python main.py --mode live --method retinaface
 echo ""
 echo "✅ Session ended. Check data/cropped_faces/ for saved faces!"
 
+
+
