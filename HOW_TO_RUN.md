@@ -133,8 +133,15 @@ sudo -u postgres psql -d face_system
 
 ### API Endpoints
 - API Server: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+- API Docs (Swagger UI): http://localhost:8000/docs
+- API Docs (ReDoc): http://localhost:8000/redoc
 - Health Check: `curl http://localhost:8000`
+
+**About the Documentation:**
+- FastAPI automatically generates interactive API documentation
+- Visit `/docs` to see all endpoints, test them directly from your browser
+- No manual documentation needed - it's generated from your code!
+- See `API_DOCUMENTATION_EXPLAINED.md` for detailed explanation
 
 ---
 

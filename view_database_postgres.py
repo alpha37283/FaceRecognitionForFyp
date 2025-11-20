@@ -111,3 +111,20 @@ def view_database():
 if __name__ == "__main__":
     view_database()
 
+
+
+
+
+# POST /api/persons/upload-embedding  => Purpose: Upload a face embedding with person information => Use case: Main endpoint for storing embeddings. Creates a person if needed, then stores the embedding.
+
+#  GET /api/persons/{person_id} => Purpose: Get person information by ID => Use case: Get person details by ID
+
+# GET /api/persons/{person_id}/embeddings => Purpose: Get all embeddings for a person => Use case: Get all embeddings for a person by ID
+
+# GET /api/embeddings/{embedding_id}/vector => Purpose: Get the embedding vector (512 numbers) for an embedding ID => Use case: Retrieve the actual embedding vector for comparison/recognition
+
+"""
+GET /docs - Swagger UI (interactive documentation)
+GET /redoc - ReDoc (alternative documentation)
+GET /openapi.json - OpenAPI schema (JSON format)
+"""
