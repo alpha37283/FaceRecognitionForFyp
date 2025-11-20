@@ -6,17 +6,17 @@ import os
 from pathlib import Path
 
 # Database Configuration
-DATABASE_TYPE = os.getenv("DATABASE_TYPE", "sqlite")  # sqlite, postgresql, mysql
+DATABASE_TYPE = os.getenv("DATABASE_TYPE", "postgresql")  # postgresql (default), mysql
 
-# SQLite Configuration (default, for development)
-SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "data/database/face_system.db")
-
-# PostgreSQL Configuration
+# PostgreSQL Configuration (default)
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 POSTGRES_DB = os.getenv("POSTGRES_DB", "face_system")
 POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "postgres")  # Default password
+
+# SQLite Configuration (deprecated - not used)
+# SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "data/database/face_system.db")
 
 # MySQL Configuration
 MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
@@ -35,5 +35,4 @@ UPLOAD_BASE_DIR = Path(os.getenv("UPLOAD_BASE_DIR", "data/uploads"))
 
 # Create directories if they don't exist
 UPLOAD_BASE_DIR.mkdir(parents=True, exist_ok=True)
-Path(SQLITE_DB_PATH).parent.mkdir(parents=True, exist_ok=True)
 

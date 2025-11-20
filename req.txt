@@ -23,6 +23,6 @@ uvicorn[standard]>=0.24.0
 sqlalchemy>=2.0.0
 pydantic>=2.0.0
 
-# Database drivers (optional, install as needed)
-# psycopg2-binary>=2.9.0  # For PostgreSQL
-# pymysql>=1.1.0          # For MySQL
+# Database drivers
+psycopg2-binary>=2.9.0  # For PostgreSQL (required)
+# pymysql>=1.1.0          # For MySQL (optional)

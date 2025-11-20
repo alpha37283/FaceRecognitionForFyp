@@ -16,6 +16,12 @@ if ! python -c "import uvicorn" 2>/dev/null; then
     pip install -q fastapi uvicorn sqlalchemy pydantic requests
 fi
 
+# Check if psycopg2 is installed (required for PostgreSQL)
+if ! python -c "import psycopg2" 2>/dev/null; then
+    echo "[INFO] Installing PostgreSQL driver (psycopg2)..."
+    pip install -q psycopg2-binary
+fi
+
 echo "[INFO] Starting API server on http://localhost:8000"
 echo "[INFO] API docs available at http://localhost:8000/docs"
 echo ""
