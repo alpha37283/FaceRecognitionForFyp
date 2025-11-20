@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-View PostgreSQL database contents
-"""
 import psycopg2
 import os
 import sys
@@ -17,44 +14,19 @@ def view_database():
         # If that fails, it means we need password or sudo access
         try:
             if POSTGRES_PASSWORD:
-                conn = psycopg2.connect(
-                    host=POSTGRES_HOST,
-                    port=POSTGRES_PORT,
-                    database=POSTGRES_DB,
-                    user=POSTGRES_USER,
-                    password=POSTGRES_PASSWORD
-                )
+                conn = psycopg2.connect(host=POSTGRES_HOST, port=POSTGRES_PORT, database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD)
             else:
-                # Try peer authentication (uses system user)
-                conn = psycopg2.connect(
-                    host=POSTGRES_HOST,
-                    port=POSTGRES_PORT,
-                    database=POSTGRES_DB,
-                    user=POSTGRES_USER
-                )
+                conn = psycopg2.connect(host=POSTGRES_HOST, port=POSTGRES_PORT, database=POSTGRES_DB, user=POSTGRES_USER)
         except psycopg2.OperationalError as e:
             if "password" in str(e).lower() or "authentication" in str(e).lower():
-                print("[-] Authentication failed. Trying with current system user...")
-                # Try connecting as current system user (for peer auth)
                 import getpass
                 current_user = getpass.getuser()
-                conn = psycopg2.connect(
-                    host=POSTGRES_HOST,
-                    port=POSTGRES_PORT,
-                    database=POSTGRES_DB,
-                    user=current_user
-                )
+                conn = psycopg2.connect(host=POSTGRES_HOST, port=POSTGRES_PORT, database=POSTGRES_DB, user=current_user)
             else:
                 raise
         
         cursor = conn.cursor()
-        
-        # Check if tables exist
-        cursor.execute("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public'
-        """)
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         tables = cursor.fetchall()
         
         if not tables:
@@ -67,7 +39,6 @@ def view_database():
         print("POSTGRESQL DATABASE CONTENTS")
         print("=" * 70)
         
-        # View persons table
         print("\n📋 PERSONS TABLE")
         print("-" * 70)
         cursor.execute("SELECT * FROM persons")
@@ -83,14 +54,9 @@ def view_database():
         else:
             print("(No persons in database)")
         
-        # View embeddings table (without vector)
         print("\n🔢 FACE_EMBEDDINGS TABLE")
         print("-" * 70)
-        cursor.execute("""
-            SELECT embedding_id, person_id, source_image_url, 
-                   detection_method, confidence_score, created_at 
-            FROM face_embeddings
-        """)
+        cursor.execute("SELECT embedding_id, person_id, source_image_url, detection_method, confidence_score, created_at FROM face_embeddings")
         embeddings = cursor.fetchall()
         if embeddings:
             print(f"{'Emb ID':<8} {'Person ID':<10} {'Method':<10} {'Confidence':<12} {'Image'}")
@@ -104,7 +70,6 @@ def view_database():
         else:
             print("(No embeddings in database)")
         
-        # View sync log
         print("\n📝 SYNC LOG TABLE")
         print("-" * 70)
         cursor.execute("SELECT * FROM embedding_sync_log")
@@ -114,13 +79,11 @@ def view_database():
             print("-" * 70)
             for log in logs:
                 sync_id, emb_id, person_id, action, timestamp, synced = log
-                # Handle both Enum and string types
                 action_str = action.value if hasattr(action, 'value') else str(action)
                 print(f"{sync_id:<8} {emb_id:<8} {person_id:<10} {action_str:<10} {timestamp}")
         else:
             print("(No sync logs)")
         
-        # Summary
         print("\n" + "=" * 70)
         print("SUMMARY")
         print("=" * 70)

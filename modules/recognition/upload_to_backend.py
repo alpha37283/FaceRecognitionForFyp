@@ -1,8 +1,4 @@
 # modules/recognition/upload_to_backend.py
-"""
-Helper module to upload embeddings to backend API
-This connects the processing service to the backend storage API
-"""
 import os
 import sys
 
@@ -27,47 +23,9 @@ def upload_embedding(
     confidence_score: Optional[float] = None,
     api_base_url: Optional[str] = None
 ) -> Dict:
-    """
-    Upload embedding to backend API after generation
-    
-    This function should be called after generating embeddings using
-    the existing embedding generation system.
-    
-    Args:
-        person_name: Person's name (required)
-        embedding_vector: 512-dimensional embedding vector (required)
-        age: Person's age (optional)
-        gender: Person's gender - 'M', 'F', or 'Other' (optional)
-        notes: Additional notes (optional)
-        source_image_url: Path/URL to original image (optional)
-        preprocessed_image_url: Path/URL to preprocessed 112x112 image (optional)
-        detection_method: 'mtcnn' or 'retinaface' (optional)
-        confidence_score: Detection confidence 0-1 (optional)
-        api_base_url: Backend API URL (default: http://localhost:8000)
-        
-    Returns:
-        Dictionary with response from backend API
-        
-    Example:
-        # After generating embedding
-        embedding, preprocessed_img, landmarks = generator.generate_embedding(face_image)
-        
-        # Upload to backend
-        result = upload_embedding(
-            person_name="John Doe",
-            embedding_vector=embedding.tolist(),
-            age=35,
-            gender="M",
-            notes="Security guard",
-            source_image_url="data/cropped_faces/face1.jpg",
-            preprocessed_image_url="data/embeddings/preprocessed/face1_112x112.jpg",
-            detection_method="mtcnn"
-        )
-    """
     if api_base_url is None:
         api_base_url = os.getenv("BACKEND_API_URL", "http://localhost:8000")
     
-    # Prepare person data
     person_data = {
         "name": person_name,
         "age": age,
@@ -75,7 +33,6 @@ def upload_embedding(
         "notes": notes
     }
     
-    # Upload to backend
     try:
         result = upload_embedding_to_backend(
             person_data=person_data,

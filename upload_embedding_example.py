@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Example script showing how to use the upload functionality
-This demonstrates the complete workflow: detection -> embedding -> upload
-"""
 import os
 import sys
 
@@ -26,65 +22,37 @@ def process_and_upload_image(
     notes: Optional[str] = None,
     api_base_url: Optional[str] = None
 ):
-    """
-    Complete workflow: Detect face -> Generate embedding -> Upload to backend
-    
-    Args:
-        image_path: Path to input image
-        person_name: Person's name
-        detection_method: 'mtcnn' or 'retinaface'
-        age: Person's age (optional)
-        gender: Person's gender (optional)
-        notes: Additional notes (optional)
-        api_base_url: Backend API URL (optional)
-    """
     print(f"[INFO] Processing image: {image_path}")
     print(f"[INFO] Person: {person_name}")
-    print(f"[INFO] Detection method: {detection_method}")
-    print()
+    print(f"[INFO] Detection method: {detection_method}\n")
     
-    # Step 1: Detect faces
     print("[STEP 1] Detecting faces...")
-    cropped_face_paths = detect_faces_from_image(
-        image_path,
-        method=detection_method,
-        generate_embeddings=False  # We'll generate embeddings separately
-    )
+    cropped_face_paths = detect_faces_from_image(image_path, method=detection_method, generate_embeddings=False)
     
     if not cropped_face_paths:
         print("[-] No faces detected. Cannot proceed.")
         return None
     
-    print(f"[+] Detected {len(cropped_face_paths)} face(s)")
-    print()
+    print(f"[+] Detected {len(cropped_face_paths)} face(s)\n")
     
-    # Step 2: Generate embeddings
     print("[STEP 2] Generating embeddings...")
-    embedding_results = generate_embeddings_for_cropped_faces(
-        cropped_face_paths,
-        output_dir="data/embeddings",
-        save_preprocessed=True
-    )
+    embedding_results = generate_embeddings_for_cropped_faces(cropped_face_paths, output_dir="data/embeddings", save_preprocessed=True)
     
     if not embedding_results:
         print("[-] Failed to generate embeddings. Cannot proceed.")
         return None
     
-    print(f"[+] Generated {len(embedding_results)} embedding(s)")
-    print()
+    print(f"[+] Generated {len(embedding_results)} embedding(s)\n")
     
-    # Step 3: Upload to backend
     print("[STEP 3] Uploading to backend API...")
     uploaded_results = []
     
     for face_path, result_data in embedding_results.items():
         try:
-            # Get base name for URLs
             base_name = os.path.splitext(os.path.basename(face_path))[0]
             source_url = face_path
             preprocessed_url = result_data.get('preprocessed_path')
             
-            # Upload embedding
             upload_result = upload_embedding(
                 person_name=person_name,
                 embedding_vector=result_data['embedding'].tolist(),

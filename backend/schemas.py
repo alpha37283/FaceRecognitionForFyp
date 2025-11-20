@@ -1,18 +1,14 @@
 # backend/schemas.py
-"""
-Pydantic schemas for API request/response validation
-"""
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from datetime import datetime
 
 
 class PersonData(BaseModel):
-    """Person information schema"""
-    name: str = Field(..., min_length=1, max_length=255, description="Person's full name")
-    age: Optional[int] = Field(None, ge=0, le=150, description="Person's age")
-    gender: Optional[str] = Field(None, description="Gender: 'M', 'F', or 'Other'")
-    notes: Optional[str] = Field(None, description="Additional notes or description")
+    name: str = Field(..., min_length=1, max_length=255)
+    age: Optional[int] = Field(None, ge=0, le=150)
+    gender: Optional[str] = Field(None)
+    notes: Optional[str] = Field(None)
 
     @validator('gender')
     def validate_gender(cls, v):
@@ -22,12 +18,11 @@ class PersonData(BaseModel):
 
 
 class EmbeddingData(BaseModel):
-    """Embedding data schema"""
-    embedding_vector: List[float] = Field(..., description="512-dimensional embedding vector")
-    source_image_url: Optional[str] = Field(None, max_length=500, description="URL/path to source image")
-    preprocessed_image_url: Optional[str] = Field(None, max_length=500, description="URL/path to preprocessed 112x112 image")
-    detection_method: Optional[str] = Field(None, description="Detection method: 'mtcnn' or 'retinaface'")
-    confidence_score: Optional[float] = Field(None, ge=0.0, le=1.0, description="Detection confidence score")
+    embedding_vector: List[float] = Field(...)
+    source_image_url: Optional[str] = Field(None, max_length=500)
+    preprocessed_image_url: Optional[str] = Field(None, max_length=500)
+    detection_method: Optional[str] = Field(None)
+    confidence_score: Optional[float] = Field(None, ge=0.0, le=1.0)
 
     @validator('embedding_vector')
     def validate_embedding_dimension(cls, v):
@@ -43,13 +38,11 @@ class EmbeddingData(BaseModel):
 
 
 class UploadEmbeddingRequest(BaseModel):
-    """Request schema for uploading embedding"""
     person_data: PersonData
     embedding_data: EmbeddingData
 
 
 class UploadEmbeddingResponse(BaseModel):
-    """Response schema for uploading embedding"""
     success: bool
     embedding_id: int
     person_id: int
@@ -58,7 +51,6 @@ class UploadEmbeddingResponse(BaseModel):
 
 
 class PersonResponse(BaseModel):
-    """Person information response"""
     person_id: int
     name: str
     age: Optional[int]
@@ -69,7 +61,6 @@ class PersonResponse(BaseModel):
 
 
 class EmbeddingResponse(BaseModel):
-    """Embedding information response (without vector)"""
     embedding_id: int
     person_id: int
     source_image_url: Optional[str]
@@ -80,7 +71,6 @@ class EmbeddingResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Error response schema"""
     success: bool = False
     error: str
     code: str

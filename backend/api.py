@@ -1,7 +1,4 @@
 # backend/api.py
-"""
-FastAPI application for embedding storage
-"""
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -22,14 +19,12 @@ from backend.services import (
 )
 from backend.models import Person, FaceEmbedding
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Face Embedding Storage API",
     description="API for storing face embeddings and person information",
     version="1.0.0"
 )
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Configure appropriately for production
@@ -41,14 +36,12 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database on startup"""
     init_db()
     print("[INFO] Database initialized")
 
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
     return {
         "message": "Face Embedding Storage API",
         "version": "1.0.0",
@@ -57,16 +50,7 @@ async def root():
 
 
 @app.post("/api/persons/upload-embedding", response_model=UploadEmbeddingResponse)
-async def upload_embedding(
-    request: UploadEmbeddingRequest,
-    db: Session = Depends(get_db)
-):
-    """
-    Store pre-generated embedding and person metadata
-    
-    This endpoint receives embeddings that have already been generated
-    by the processing service. It does NOT do preprocessing or embedding generation.
-    """
+async def upload_embedding(request: UploadEmbeddingRequest, db: Session = Depends(get_db)):
     try:
         # Create or get person
         person = create_or_get_person(db, request.person_data)
@@ -99,11 +83,7 @@ async def upload_embedding(
 
 
 @app.get("/api/persons/{person_id}", response_model=PersonResponse)
-async def get_person(
-    person_id: int,
-    db: Session = Depends(get_db)
-):
-    """Get person information by ID"""
+async def get_person(person_id: int, db: Session = Depends(get_db)):
     person = get_person_by_id(db, person_id)
     if not person:
         raise HTTPException(
@@ -114,11 +94,7 @@ async def get_person(
 
 
 @app.get("/api/persons/{person_id}/embeddings", response_model=list[EmbeddingResponse])
-async def get_person_embeddings_endpoint(
-    person_id: int,
-    db: Session = Depends(get_db)
-):
-    """Get all embeddings for a person (without embedding vectors)"""
+async def get_person_embeddings_endpoint(person_id: int, db: Session = Depends(get_db)):
     person = get_person_by_id(db, person_id)
     if not person:
         raise HTTPException(
@@ -131,11 +107,7 @@ async def get_person_embeddings_endpoint(
 
 
 @app.get("/api/embeddings/{embedding_id}/vector")
-async def get_embedding_vector_endpoint(
-    embedding_id: int,
-    db: Session = Depends(get_db)
-):
-    """Get embedding vector by ID (for comparison)"""
+async def get_embedding_vector_endpoint(embedding_id: int, db: Session = Depends(get_db)):
     embedding = db.query(FaceEmbedding).filter(FaceEmbedding.embedding_id == embedding_id).first()
     if not embedding:
         raise HTTPException(
