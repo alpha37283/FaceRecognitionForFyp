@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--method", type=str, default="mtcnn", choices=["mtcnn", "retinaface"])
     parser.add_argument("--input", type=str, default=None)
     parser.add_argument("--embed", action="store_true", 
-                       help="Generate ArcFace embeddings after face detection (image mode only)")
+                       help="Generate ArcFace embeddings after face detection (works for both image and live modes)")
     args = parser.parse_args()
 
     if args.mode == "image":
@@ -28,7 +28,7 @@ def main():
 
     elif args.mode == "live":
         print("[INFO] Starting live camera face detection...")
-        live_face_detection(method=args.method)
+        live_face_detection(method=args.method, generate_embeddings=args.embed)
 
 if __name__ == "__main__":
     main()

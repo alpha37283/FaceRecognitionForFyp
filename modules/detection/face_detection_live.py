@@ -28,13 +28,14 @@ class FaceTracker:
         return success, self.bbox
 
 
-def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5):
-    """Live face detection with automatic tracking-based saving.
+def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5, generate_embeddings=False):
+    """Live face detection with automatic tracking-based saving and optional embedding generation.
     
     Algorithm: Tracking + Save-on-New-Track
     - Detects faces periodically
     - Assigns unique tracker to each new face
     - Saves face once when first tracked
+    - Generates ArcFace embeddings with same preprocessing as static images (if enabled)
     - Tracks continuously until face leaves frame
     - New detection when tracking is lost
     
@@ -42,6 +43,7 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
         method: Detection method ('mtcnn' or 'retinaface')
         detection_interval: Run face detection every N frames (default: 60, ~2 seconds)
         iou_threshold: Minimum overlap to consider same face (default: 0.5, range: 0.3-0.7)
+        generate_embeddings: If True, generate ArcFace embeddings for detected faces (default: False)
     """
     # Initialize the appropriate detector
     print(f"[INFO] Initializing {method.upper()} face detector...")
@@ -52,6 +54,15 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
         detector = RetinaFaceDetector()
     else:
         raise ValueError(f"Unsupported method: {method}. Use 'mtcnn' or 'retinaface'")
+    
+    # Initialize live embedding generator if embeddings are enabled
+    live_embedding_gen = None
+    if generate_embeddings:
+        from modules.recognition.live_embedding import LiveEmbeddingGenerator
+        live_embedding_gen = LiveEmbeddingGenerator(
+            output_dir="data/embeddings",
+            save_preprocessed=True
+        )
     
     # Create output directory if it doesn't exist
     output_dir = "data/cropped_faces"
@@ -69,6 +80,9 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     print("   ✅ Detects new faces automatically")
     print("   ✅ Tracks each face with unique ID")
     print("   ✅ Saves ONE image per person (when first detected)")
+    if generate_embeddings:
+        print("   ✅ Generates ArcFace embeddings with full preprocessing")
+        print("   ✅ Saves preprocessed 112×112 images")
     print("   ✅ Continues tracking until face leaves frame")
     print("   ✅ New faces get new IDs and are saved")
     print(f"\n⚙️  Settings:")
@@ -76,6 +90,7 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     print(f"   - Detection interval: {detection_interval} frames (~{detection_interval/30:.1f}s)")
     print(f"   - IoU threshold: {iou_threshold} (overlap matching)")
     print(f"   - Tracker: KCF (Fast & Reliable)")
+    print(f"   - Embedding generation: {'ENABLED' if generate_embeddings else 'DISABLED'}")
     print("\n🎮 Controls:")
     print("   - Press 'q' to quit")
     print("="*60 + "\n")
@@ -85,6 +100,7 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     next_tracker_id = 1
     frame_count = 0
     total_saved = 0
+    total_embeddings = 0
 
     while True:
         ret, frame = cap.read()
@@ -173,6 +189,17 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
                         total_saved += 1
                         new_tracker.saved = True
                         
+                        # Generate embedding with same preprocessing as static images
+                        if generate_embeddings and live_embedding_gen:
+                            base_name = os.path.splitext(filename)[0]
+                            result = live_embedding_gen.generate_embedding_for_face(face_pil, base_name=base_name)
+                            
+                            if result['success']:
+                                total_embeddings += 1
+                                print(f"[+] Generated embedding for ID-{next_tracker_id} | Embedding: {os.path.basename(result['embedding_path'])}")
+                            else:
+                                print(f"[-] Failed to generate embedding for ID-{next_tracker_id}")
+                        
                         print(f"[+] NEW FACE DETECTED! Saved as ID-{next_tracker_id} | File: {filename} | Total: {total_saved}")
                     
                     # Draw detection box (green for newly detected)
@@ -184,7 +211,10 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
                     next_tracker_id += 1
 
         # Display info on screen
-        cv2.putText(display_frame, f"Active Tracks: {len(active_trackers)} | Saved: {total_saved}", 
+        status_text = f"Active Tracks: {len(active_trackers)} | Saved: {total_saved}"
+        if generate_embeddings:
+            status_text += f" | Embeddings: {total_embeddings}"
+        cv2.putText(display_frame, status_text, 
                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
         
         # Show detection status
@@ -205,4 +235,8 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     print(f"{'='*60}")
     print(f"✅ Total unique faces saved: {total_saved}")
     print(f"📁 Location: {output_dir}/")
+    if generate_embeddings:
+        print(f"✅ Total embeddings generated: {total_embeddings}")
+        print(f"📁 Embeddings location: data/embeddings/")
+        print(f"📁 Preprocessed images location: data/embeddings/preprocessed/")
     print(f"{'='*60}\n")
