@@ -1,0 +1,77 @@
+{
+  "last_sync": "2025-11-27T12:13:54.577243",
+  "embeddings": {
+    "1": {
+      "embedding_id": 1,
+      "person_id": 1,
+      "person_name": "sajjad khader",
+      "person_age": null,
+      "person_gender": null,
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_1.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-20T22:06:56.659871+05:00",
+      "synced_at": "2025-11-27T12:10:46.840538"
+    },
+    "2": {
+      "embedding_id": 2,
+      "person_id": 2,
+      "person_name": "Sajjad Khader",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_2.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-27T11:54:35.681352+05:00",
+      "synced_at": "2025-11-27T12:10:46.841253"
+    },
+    "3": {
+      "embedding_id": 3,
+      "person_id": 3,
+      "person_name": "Kobe",
+      "person_age": 20,
+      "person_gender": "M",
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_3.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-27T12:03:35.996393+05:00",
+      "synced_at": "2025-11-27T12:10:46.841655"
+    },
+    "4": {
+      "embedding_id": 4,
+      "person_id": 3,
+      "person_name": "Kobe",
+      "person_age": 20,
+      "person_gender": "M",
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_4.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-27T12:08:29.123023+05:00",
+      "synced_at": "2025-11-27T12:10:46.841815"
+    },
+    "5": {
+      "embedding_id": 5,
+      "person_id": 2,
+      "person_name": "Sajjad Khader",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_5.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-27T12:08:45.275161+05:00",
+      "synced_at": "2025-11-27T12:10:46.842024"
+    },
+    "6": {
+      "embedding_id": 6,
+      "person_id": 4,
+      "person_name": "Sajjad Khader",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_6.npy",
+      "action": "INSERT",
+      "timestamp": "2025-11-27T12:13:51.672037+05:00",
+      "synced_at": "2025-11-27T12:13:54.577224"
+    }
+  }
+}

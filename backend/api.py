@@ -126,3 +126,5 @@ async def get_embedding_vector_endpoint(embedding_id: int, db: Session = Depends
         "vector": vector
     }
 
+
+

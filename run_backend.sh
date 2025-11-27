@@ -1,4 +1,6 @@
 #!/bin/bash
+# Run Enrollment API Server (for Static Image Upload)
+# This is the main API for enrollment side - separate from sync API
 
 # Backend API Server Startup Script
 
