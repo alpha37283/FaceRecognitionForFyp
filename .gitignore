@@ -23,6 +23,7 @@ data/embeddings/
 data/database/
 data/logs/
 data/local_embeddings/
+data/recognition_logs/
 
 # Keep directory structure but ignore contents
 !data/cropped_faces/.gitkeep
