@@ -1,0 +1,28 @@
+# Core utilities
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Deep learning frameworks
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Face detection models
+facenet-pytorch>=2.5.3      # For MTCNN
+insightface>=0.7.3          # For RetinaFace
+onnxruntime>=1.15.0         # Required by insightface
+
+# Computer vision
+opencv-contrib-python>=4.10.0  # Includes tracking algorithms (TrackerKCF, TrackerCSRT)
+
+# Optional for config handling if needed later
+PyYAML>=6.0.1
+
+# Backend API dependencies
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.0
+pydantic>=2.0.0
+
+# Database drivers
+psycopg2-binary>=2.9.0  # For PostgreSQL (required)
+# pymysql>=1.1.0          # For MySQL (optional)
