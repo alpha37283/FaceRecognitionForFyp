@@ -13,6 +13,8 @@ class FaceTracker:
         self.id = tracker_id
         self.bbox = bbox
         self.saved = False
+        self.recognized_name = None  # Store recognized name
+        self.last_recognition_frame = 0  # Track when last recognized
         
         # Create OpenCV tracker (KCF is fast and reliable)
         self.tracker = cv2.TrackerKCF_create()
@@ -28,7 +30,7 @@ class FaceTracker:
         return success, self.bbox
 
 
-def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5, generate_embeddings=False):
+def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5, generate_embeddings=False, enable_recognition=False, similarity_threshold=0.6):
     """Live face detection with automatic tracking-based saving and optional embedding generation.
     
     Algorithm: Tracking + Save-on-New-Track
@@ -44,6 +46,8 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
         detection_interval: Run face detection every N frames (default: 60, ~2 seconds)
         iou_threshold: Minimum overlap to consider same face (default: 0.5, range: 0.3-0.7)
         generate_embeddings: If True, generate ArcFace embeddings for detected faces (default: False)
+        enable_recognition: If True, compare faces with synced embeddings and recognize (default: False)
+        similarity_threshold: Minimum cosine similarity for recognition match (default: 0.6)
     """
     # Initialize the appropriate detector
     print(f"[INFO] Initializing {method.upper()} face detector...")
@@ -55,14 +59,39 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     else:
         raise ValueError(f"Unsupported method: {method}. Use 'mtcnn' or 'retinaface'")
     
-    # Initialize live embedding generator if embeddings are enabled
+    # Initialize live embedding generator (required for recognition)
     live_embedding_gen = None
-    if generate_embeddings:
+    if generate_embeddings or enable_recognition:
         from modules.recognition.live_embedding import LiveEmbeddingGenerator
         live_embedding_gen = LiveEmbeddingGenerator(
             output_dir="data/embeddings",
             save_preprocessed=True
         )
+    
+    # Initialize face matcher for recognition
+    face_matcher = None
+    log_file = None
+    if enable_recognition:
+        from modules.recognition.face_matcher import FaceMatcher
+        from modules.recognition.sync_embeddings import EmbeddingSyncClient
+        
+        face_matcher = FaceMatcher(similarity_threshold=similarity_threshold)
+        
+        # Load synced embeddings for comparison
+        print("[INFO] Loading synced embeddings for recognition...")
+        sync_client = EmbeddingSyncClient(
+            api_base_url="http://localhost:8001",
+            local_cache_dir="data/local_embeddings"
+        )
+        synced_embeddings = sync_client.get_local_embeddings()
+        face_matcher.load_synced_embeddings(synced_embeddings)
+        print(f"[INFO] Loaded {len(synced_embeddings)} synced embedding(s) for recognition")
+        
+        # Setup log file for recognition matches
+        log_dir = "data/recognition_logs"
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, f"recognition_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+        print(f"[INFO] Recognition logs will be saved to: {log_file}")
     
     # Create output directory if it doesn't exist
     output_dir = "data/cropped_faces"
@@ -91,6 +120,9 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
     print(f"   - IoU threshold: {iou_threshold} (overlap matching)")
     print(f"   - Tracker: KCF (Fast & Reliable)")
     print(f"   - Embedding generation: {'ENABLED' if generate_embeddings else 'DISABLED'}")
+    print(f"   - Face recognition: {'ENABLED' if enable_recognition else 'DISABLED'}")
+    if enable_recognition:
+        print(f"   - Similarity threshold: {similarity_threshold}")
     print("\n🎮 Controls:")
     print("   - Press 'q' to quit")
     print("="*60 + "\n")
@@ -116,14 +148,18 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
             success, bbox = tracker.update(frame)
             
             if success:
-                # Draw tracking box (blue color for tracked faces)
                 x, y, w, h = bbox
-                cv2.rectangle(display_frame, (x, y), (x + w, y + h), (255, 165, 0), 2)
                 
-                # Draw tracker ID
-                label = f"ID-{tracker.id} (Tracking)"
-                cv2.putText(display_frame, label, (x, y - 10),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 165, 0), 2)
+                # Draw tracking box (red if recognized, blue if unknown)
+                if tracker.recognized_name:
+                    cv2.rectangle(display_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    cv2.putText(display_frame, tracker.recognized_name, (x, y - 10),
+                               cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                else:
+                    cv2.rectangle(display_frame, (x, y), (x + w, y + h), (255, 165, 0), 2)
+                    label = f"ID-{tracker.id} (Tracking)"
+                    cv2.putText(display_frame, label, (x, y - 10),
+                               cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 165, 0), 2)
             else:
                 # Tracking lost, mark for removal
                 trackers_to_remove.append(tracker)
@@ -189,24 +225,64 @@ def live_face_detection(method="mtcnn", detection_interval=60, iou_threshold=0.5
                         total_saved += 1
                         new_tracker.saved = True
                         
-                        # Generate embedding with same preprocessing as static images
-                        if generate_embeddings and live_embedding_gen:
+                        # Generate embedding and recognize IMMEDIATELY (if enabled)
+                        recognized_name = None
+                        recognized_age = None
+                        similarity_score = None
+                        
+                        if (generate_embeddings or enable_recognition) and live_embedding_gen:
                             base_name = os.path.splitext(filename)[0]
                             result = live_embedding_gen.generate_embedding_for_face(face_pil, base_name=base_name)
                             
                             if result['success']:
                                 total_embeddings += 1
-                                print(f"[+] Generated embedding for ID-{next_tracker_id} | Embedding: {os.path.basename(result['embedding_path'])}")
+                                embedding = result['embedding']
+                                
+                                if generate_embeddings:
+                                    print(f"[+] Generated embedding for ID-{next_tracker_id} | Embedding: {os.path.basename(result['embedding_path'])}")
+                                
+                                # Recognize face IMMEDIATELY if enabled
+                                if enable_recognition and face_matcher:
+                                    match = face_matcher.match_face(embedding)
+                                    if match:
+                                        recognized_name = match['person_name']
+                                        recognized_age = match['person_age']
+                                        similarity_score = match['similarity']
+                                        
+                                        # Store recognized name in tracker for display
+                                        new_tracker.recognized_name = recognized_name
+                                        
+                                        # Log to console (name + age)
+                                        age_str = f", Age: {recognized_age}" if recognized_age else ""
+                                        print(f"[RECOGNIZED] ID-{next_tracker_id}: {recognized_name}{age_str} (Similarity: {similarity_score:.3f})")
+                                        
+                                        # Save to log file (name + age)
+                                        try:
+                                            with open(log_file, 'a') as f:
+                                                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                                age_log = f", Age: {recognized_age}" if recognized_age else ""
+                                                f.write(f"[{timestamp}] ID-{next_tracker_id}: {recognized_name}{age_log}, Similarity: {similarity_score:.3f}\n")
+                                        except Exception as e:
+                                            print(f"[-] Error writing to log file: {e}")
                             else:
                                 print(f"[-] Failed to generate embedding for ID-{next_tracker_id}")
                         
                         print(f"[+] NEW FACE DETECTED! Saved as ID-{next_tracker_id} | File: {filename} | Total: {total_saved}")
                     
-                    # Draw detection box (green for newly detected)
-                    cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
-                    label = f"NEW: ID-{next_tracker_id}"
-                    cv2.putText(display_frame, label, (x1, y1 - 30),
-                               cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                    # Draw detection box (green for newly detected, red if recognized)
+                    if recognized_name:
+                        # Recognized person - red box
+                        cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 0, 255), 3)
+                        # Display name on overlay
+                        label = recognized_name
+                        cv2.putText(display_frame, label, (x1, y1 - 10),
+                                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                    else:
+                        # Unknown person - green box
+                        cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
+                        label = f"NEW: ID-{next_tracker_id}"
+                        cv2.putText(display_frame, label, (x1, y1 - 30),
+                                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
                     
                     next_tracker_id += 1
 

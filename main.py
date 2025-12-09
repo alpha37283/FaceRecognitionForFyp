@@ -17,6 +17,10 @@ def main():
     parser.add_argument("--input", type=str, default=None)
     parser.add_argument("--embed", action="store_true", 
                        help="Generate ArcFace embeddings after face detection (works for both image and live modes)")
+    parser.add_argument("--recognize", action="store_true",
+                       help="Enable face recognition - compare live faces with synced embeddings (live mode only)")
+    parser.add_argument("--similarity-threshold", type=float, default=0.6,
+                       help="Minimum cosine similarity for recognition match (default: 0.6)")
     args = parser.parse_args()
 
     if args.mode == "image":
@@ -28,7 +32,12 @@ def main():
 
     elif args.mode == "live":
         print("[INFO] Starting live camera face detection...")
-        live_face_detection(method=args.method, generate_embeddings=args.embed)
+        live_face_detection(
+            method=args.method, 
+            generate_embeddings=args.embed or args.recognize,  # Auto-enable embeddings if recognition is on
+            enable_recognition=args.recognize,
+            similarity_threshold=args.similarity_threshold
+        )
 
 if __name__ == "__main__":
     main()

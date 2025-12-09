@@ -1,5 +1,5 @@
 {
-  "last_sync": "2025-11-27T12:13:54.577243",
+  "last_sync": "2025-12-09T22:07:17.329338",
   "embeddings": {
     "1": {
       "embedding_id": 1,
@@ -72,6 +72,126 @@
       "action": "INSERT",
       "timestamp": "2025-11-27T12:13:51.672037+05:00",
       "synced_at": "2025-11-27T12:13:54.577224"
+    },
+    "7": {
+      "embedding_id": 7,
+      "person_id": 5,
+      "person_name": "Test",
+      "person_age": null,
+      "person_gender": null,
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_7.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T18:20:12.042289+05:00",
+      "synced_at": "2025-12-09T18:20:14.505929"
+    },
+    "8": {
+      "embedding_id": 8,
+      "person_id": 6,
+      "person_name": "Sajjar Khader",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "Test person",
+      "embedding_path": "data/local_embeddings/embedding_8.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T18:39:22.497857+05:00",
+      "synced_at": "2025-12-09T18:39:22.757848"
+    },
+    "9": {
+      "embedding_id": 9,
+      "person_id": 7,
+      "person_name": "Kobe",
+      "person_age": 50,
+      "person_gender": "M",
+      "person_notes": "Test person 2",
+      "embedding_path": "data/local_embeddings/embedding_9.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T18:40:54.576925+05:00",
+      "synced_at": "2025-12-09T18:40:55.941031"
+    },
+    "10": {
+      "embedding_id": 10,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_10.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T21:57:24.590327+05:00",
+      "synced_at": "2025-12-09T21:57:25.001534"
+    },
+    "11": {
+      "embedding_id": 11,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_11.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:06:04.376564+05:00",
+      "synced_at": "2025-12-09T22:06:05.103381"
+    },
+    "12": {
+      "embedding_id": 12,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_12.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:06:18.916542+05:00",
+      "synced_at": "2025-12-09T22:06:20.143230"
+    },
+    "13": {
+      "embedding_id": 13,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_13.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:06:33.101540+05:00",
+      "synced_at": "2025-12-09T22:06:35.185290"
+    },
+    "14": {
+      "embedding_id": 14,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_14.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:06:48.261325+05:00",
+      "synced_at": "2025-12-09T22:06:50.224142"
+    },
+    "15": {
+      "embedding_id": 15,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_15.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:07:01.795734+05:00",
+      "synced_at": "2025-12-09T22:07:02.277504"
+    },
+    "16": {
+      "embedding_id": 16,
+      "person_id": 8,
+      "person_name": "Muneeb Hussain",
+      "person_age": 22,
+      "person_gender": "M",
+      "person_notes": "Student",
+      "embedding_path": "data/local_embeddings/embedding_16.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-09T22:07:14.562778+05:00",
+      "synced_at": "2025-12-09T22:07:17.329300"
     }
   }
 }
