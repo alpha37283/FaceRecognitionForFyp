@@ -11,6 +11,9 @@ elif [ -d "myenv" ]; then
     source myenv/bin/activate
 fi
 
+# Set PostgreSQL password
+export POSTGRES_PASSWORD=alpha
+
 # Set default port for sync API (different from enrollment API)
 SYNC_API_PORT=${SYNC_API_PORT:-8001}
 

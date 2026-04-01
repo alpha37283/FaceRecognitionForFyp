@@ -1,5 +1,5 @@
 {
-  "last_sync": "2025-12-10T22:55:31.963721",
+  "last_sync": "2026-02-09T11:12:24.101214",
   "embeddings": {
     "20": {
       "embedding_id": 20,
@@ -24,6 +24,90 @@
       "action": "INSERT",
       "timestamp": "2025-12-10T22:55:25.960360+05:00",
       "synced_at": "2025-12-10T22:55:31.963675"
+    },
+    "22": {
+      "embedding_id": 22,
+      "person_id": 12,
+      "person_name": "Kobe",
+      "person_age": null,
+      "person_gender": null,
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_22.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-14T20:56:52.582287+05:00",
+      "synced_at": "2025-12-14T20:56:54.575817"
+    },
+    "23": {
+      "embedding_id": 23,
+      "person_id": 13,
+      "person_name": "Muneeb",
+      "person_age": null,
+      "person_gender": null,
+      "person_notes": null,
+      "embedding_path": "data/local_embeddings/embedding_23.npy",
+      "action": "INSERT",
+      "timestamp": "2025-12-14T20:58:56.102930+05:00",
+      "synced_at": "2025-12-14T20:58:57.759976"
+    },
+    "24": {
+      "embedding_id": 24,
+      "person_id": 14,
+      "person_name": "Keanu",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "John wick",
+      "embedding_path": "data/local_embeddings/embedding_24.npy",
+      "action": "INSERT",
+      "timestamp": "2026-02-09T10:23:13.165477+05:00",
+      "synced_at": "2026-02-09T10:23:13.294394"
+    },
+    "25": {
+      "embedding_id": 25,
+      "person_id": 14,
+      "person_name": "Keanu",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "John wick",
+      "embedding_path": "data/local_embeddings/embedding_25.npy",
+      "action": "INSERT",
+      "timestamp": "2026-02-09T10:23:25.792794+05:00",
+      "synced_at": "2026-02-09T10:23:28.346141"
+    },
+    "26": {
+      "embedding_id": 26,
+      "person_id": 14,
+      "person_name": "Keanu",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "John wick",
+      "embedding_path": "data/local_embeddings/embedding_26.npy",
+      "action": "INSERT",
+      "timestamp": "2026-02-09T10:23:38.801931+05:00",
+      "synced_at": "2026-02-09T10:23:40.382154"
+    },
+    "27": {
+      "embedding_id": 27,
+      "person_id": 15,
+      "person_name": "Sir Irfan",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "Thor",
+      "embedding_path": "data/local_embeddings/embedding_27.npy",
+      "action": "INSERT",
+      "timestamp": "2026-02-09T11:12:21.495961+05:00",
+      "synced_at": "2026-02-09T11:12:24.100561"
+    },
+    "28": {
+      "embedding_id": 28,
+      "person_id": 15,
+      "person_name": "Sir Irfan",
+      "person_age": 35,
+      "person_gender": "M",
+      "person_notes": "Thor",
+      "embedding_path": "data/local_embeddings/embedding_28.npy",
+      "action": "INSERT",
+      "timestamp": "2026-02-09T11:12:21.543294+05:00",
+      "synced_at": "2026-02-09T11:12:24.101173"
     }
   }
 }

@@ -17,6 +17,9 @@ elif [ -d "myenv" ]; then
     source myenv/bin/activate
 fi
 
+# Set PostgreSQL password
+export POSTGRES_PASSWORD=alpha
+
 # Check if uvicorn is installed
 if ! python -c "import uvicorn" 2>/dev/null; then
     echo "[-] uvicorn not found. Installing dependencies..."
